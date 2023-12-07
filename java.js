@@ -23,10 +23,17 @@ if(!hasPlayed ) {
     }
   }
 
-  return { playerName, playerLetter };
+  let compLetter;
+      if(playerLetter === 'X') {
+        compLetter = 'O'
+       } else {
+        compLetter = 'X'
+       }
+
+  return { playerName, playerLetter, compLetter };
 }
 
-const { playerName, playerLetter } = createPlayer();
+const { playerName, playerLetter, compLetter } = createPlayer();
 
 
 
@@ -52,6 +59,7 @@ for(let j = 0; j < column; j++) {
 
 
 const printBoard = () => {
+  
   board.forEach(cell => {
     console.log(cell);
 
@@ -77,6 +85,15 @@ function isBoardFull() {
 }
 
 
+function resetBoard() {
+  for (let i = 0; i < board.length; i++) {
+    for (let j = 0; j < board[i].length; j++) {
+      board[i][j] = "";
+    }
+  }
+  console.log('Board reset.');
+  printBoard(board);
+}
 
 
 
@@ -84,10 +101,8 @@ function isBoardFull() {
 
 
 
-
-return { printBoard, board, isBoardFull };
+return { printBoard, board, isBoardFull, resetBoard };
 };
-
 
 
 
@@ -99,61 +114,163 @@ return { printBoard, board, isBoardFull };
 
 
 const gameControl = () => {
-  const { board, printBoard, isBoardFull } = Gameboard();
-
+  const { board, printBoard, isBoardFull , resetBoard} = Gameboard();
+  let movePlayed = false;
 
   function playerMove() {
+    movePlayed = true;
 
-    
+    const row = prompt('Enter row number (0-2)');
+    const column = prompt('Enter column number (0-2)');
 
-  const row = prompt('Enter row number (0-2)');
-  const column = prompt('Enter column number (0-2)');
-
-     if(board[row][column] === "") {
-  board[row][column] = playerLetter ,
-{row, column}
-     }  
-     else {
-       alert('Already played, Please select another cell')
-     }
-
-}
-
-
-
-function compChoice() {
-  let emptyCellFound = false;
-  while (!emptyCellFound && !isBoardFull()) {
-    const randomRow = Math.floor(Math.random() * 3);
-    const randomColumn = Math.floor(Math.random() * 3);
-
-    if (board[randomRow][randomColumn] === '') {
-      board[randomRow][randomColumn] = playerLetter === 'X' ? 'O' : 'X';
-      emptyCellFound = true;
+    if (board[row][column] === '') {
+      board[row][column] = playerLetter;
+    } else {
+      alert('Already played, Please select another cell');
+      movePlayed = false;
     }
   }
+
+  function compMove() {
+    let emptyCellFound = false;
+   
+
+    while (!emptyCellFound && !isBoardFull() && movePlayed) {
+      const randomRow = Math.floor(Math.random() * 3);
+      const randomColumn = Math.floor(Math.random() * 3);
+
+      if (board[randomRow][randomColumn] === '') {
+        board[randomRow][randomColumn] = compLetter;
+        emptyCellFound = true;
+      }
+    };
+
+    return { compLetter };
+    }
+  
+function determineWinner() {
+let winnerExist = false;
+
+  
+    // Check rows
+    for (let i = 0; i < 3; i++) {
+      if (
+        board[i][0] === playerLetter &&
+        board[i][1] === playerLetter &&
+        board[i][2] === playerLetter
+      ) {   
+        winnerExist = true;
+        console.log(playerName + ' wins');
+        resetBoard()
+     
+         
+      } else if (
+        board[i][0] === compLetter &&
+        board[i][1] === compLetter &&
+        board[i][2] === compLetter
+      ) {
+        winnerExist = true;
+
+        console.log('Computer wins')
+        resetBoard()
+         
+      }
+    }
+
+  
+  
+    // Check columns
+    for (let j = 0; j < 3; j++) {
+      if (
+        board[0][j] === playerLetter &&
+        board[1][j] === playerLetter &&
+        board[2][j] === playerLetter
+      ) {
+        winnerExist = true;
+
+        console.log(playerName + ' wins')
+        resetBoard()
+
+        
+      } else if (
+        board[0][j] === compLetter &&
+        board[1][j] === compLetter &&
+        board[2][j] === compLetter
+      ) {
+        winnerExist = true;
+
+        console.log('Computer wins');
+        resetBoard()
+        
+        
+      }
+    }
+  
+    // Check diagonals
+    if (
+      (board[0][0] === playerLetter &&
+        board[1][1] === playerLetter &&
+        board[2][2] === playerLetter) ||
+      (board[0][2] === playerLetter &&
+        board[1][1] === playerLetter &&
+        board[2][0] === playerLetter)
+    ) {
+      winnerExist = true;
+
+      console.log(playerName + ' wins') ,
+      resetBoard()
+
+     
+    } else if (
+      (board[0][0] === compLetter &&
+        board[1][1] === compLetter &&
+        board[2][2] === compLetter) ||
+      (board[0][2] === compLetter &&
+        board[1][1] === compLetter &&
+        board[2][0] === compLetter)
+    ) {
+      winnerExist = true;
+
+      console.log('Computer wins'),
+      resetBoard()
+
+    } 
+
+if(winnerExist === false && isBoardFull()) {
+  console.log('It is a Draw!') 
+  resetBoard()
+
 }
-while(!isBoardFull()) {
 
-playerMove()
-compChoice()
-printBoard()
 
-} 
 
+  
+}
+
+
+
+
+
+  while (!isBoardFull()) {
+    playerMove();
+    compMove();
  
+    printBoard();
+   determineWinner();
+  }
 
-
-
-
-
-
-
-
+  console.log('Game Over');
 };
+
+
+
+
+
+
+
+
 
 
 gameControl()
 
-
-//jos neradi ova funckija za nastavit igrat dok nie puno i trebas play round dovrsit
+//determine winner nam fali(uspia san da radi comp wins i player wins sutra moras draw rjesit)
