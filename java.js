@@ -1,46 +1,10 @@
 
-const createPlayer = () =>  {
-let hasPlayed = false;
-
-if(!hasPlayed ) {
-
-
-  hasPlayed = true;
-}
-
-
-
-
-  const playerName = prompt("Player Name");
-  
-  let playerLetter;
-  while (true) {
-    playerLetter = prompt("Choose 'X' or 'O'").toUpperCase();
-    if (playerLetter === 'X' || playerLetter === 'O') {
-      break;
-    } else {
-      alert("Invalid choice. Please choose 'X' or 'O'.");
-    }
-  }
-
-  let compLetter;
-      if(playerLetter === 'X') {
-        compLetter = 'O'
-       } else {
-        compLetter = 'X'
-       }
-
-  return { playerName, playerLetter, compLetter };
-}
-
-const { playerName, playerLetter, compLetter } = createPlayer();
-
-
-
 
 
 
 function Gameboard() {
+
+
 
 const row = 3;
 const column = 3;
@@ -60,15 +24,14 @@ for(let j = 0; j < column; j++) {
 
 const printBoard = () => {
   
-  board.forEach(cell => {
-    console.log(cell);
+ board.forEach(cell => {
+   console.log(cell);
 
-  })
+ })
+
+
 };
 
-
-
-  
 
 
 function isBoardFull() {
@@ -85,6 +48,7 @@ function isBoardFull() {
 }
 
 
+
 function resetBoard() {
   for (let i = 0; i < board.length; i++) {
     for (let j = 0; j < board[i].length; j++) {
@@ -92,16 +56,12 @@ function resetBoard() {
     }
   }
   console.log('Board reset.');
-  printBoard(board);
+  printBoard();
 }
 
 
 
-
-
-
-
-return { printBoard, board, isBoardFull, resetBoard };
+return {  board, isBoardFull,resetBoard, printBoard };
 };
 
 
@@ -110,11 +70,12 @@ return { printBoard, board, isBoardFull, resetBoard };
 
 
 
-
-
-
 const gameControl = () => {
-  const { board, printBoard, isBoardFull , resetBoard} = Gameboard();
+// const { playerName, playerLetter, compLetter } = createPlayer();
+const { board,  isBoardFull ,resetBoard,printBoard} = Gameboard();
+let playerLetter = 'X';
+let compLetter = 'O';  
+
   let movePlayed = false;
 
   function playerMove() {
@@ -140,7 +101,7 @@ const gameControl = () => {
       const randomColumn = Math.floor(Math.random() * 3);
 
       if (board[randomRow][randomColumn] === '') {
-        board[randomRow][randomColumn] = compLetter;
+        board[randomRow][randomColumn] = compLetter ;
         emptyCellFound = true;
       }
     };
@@ -251,19 +212,56 @@ if(winnerExist === false && isBoardFull()) {
 
 
 
-  while (!isBoardFull()) {
-    playerMove();
-    compMove();
+
+
+
+  const  domDisplay = () => { 
+
+
+    const newBoard = document.getElementById('field')
+    
+    
+  board.forEach(item => {    
+
+    
+
+        item.forEach(val => { 
+          const cell = document.createElement('div');
+        cell.classList.add('cell');
+        cell.textContent = val;
+        newBoard.appendChild(cell)
+  })
+       
+      
+  })
+  
+  }
  
-    printBoard();
+
+
+
+
+  while (!isBoardFull()) {
+ 
+    
+    playerMove();
+
+    compMove();
+  printBoard()
+  domDisplay();
    determineWinner();
+
   }
 
+ 
+
+
   console.log('Game Over');
-};
 
 
 
+
+}
 
 
 
@@ -273,4 +271,5 @@ if(winnerExist === false && isBoardFull()) {
 
 gameControl()
 
-//determine winner nam fali(uspia san da radi comp wins i player wins sutra moras draw rjesit)
+
+
